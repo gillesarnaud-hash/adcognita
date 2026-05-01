@@ -10,7 +10,7 @@ export default function HomePage({ navigate }) {
     <div>
       {/* Hero */}
       <section style={{
-        background: 'linear-gradient(135deg, var(--navy) 0%, oklch(0.28 0.12 255) 60%, oklch(0.24 0.1 265) 100%)',
+        background: 'linear-gradient(135deg, var(--navy) 0%, oklch(0.27 0.10 155) 60%, oklch(0.22 0.08 168) 100%)',
         padding: '80px 28px 90px', position: 'relative', overflow: 'hidden'
       }}>
         <div style={{ position: 'absolute', top: -80, right: -60, width: 380, height: 380, borderRadius: '50%', background: 'rgba(255,255,255,0.03)', pointerEvents: 'none' }} />
@@ -34,7 +34,7 @@ export default function HomePage({ navigate }) {
             <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
               <button onClick={() => navigate('catalogue')}
                 style={{ background: 'var(--amber)', color: 'var(--navy)', padding: '13px 28px', borderRadius: 9, fontWeight: 700, fontSize: 14.5, border: 'none', cursor: 'pointer', transition: 'all 0.2s', boxShadow: '0 4px 16px oklch(0.7 0.18 65 / 0.35)' }}
-                onMouseEnter={e => { e.currentTarget.style.background = 'oklch(0.82 0.18 65)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'oklch(0.80 0.15 82)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
                 onMouseLeave={e => { e.currentTarget.style.background = 'var(--amber)'; e.currentTarget.style.transform = 'none'; }}
               >
                 Explorer le catalogue
@@ -81,7 +81,7 @@ export default function HomePage({ navigate }) {
               </select>
               <button onClick={() => navigate('catalogue')}
                 style={{ background: 'var(--amber)', color: 'var(--navy)', padding: '12px', borderRadius: 8, fontWeight: 700, fontSize: 14, border: 'none', cursor: 'pointer', marginTop: 4, transition: 'all 0.15s' }}
-                onMouseEnter={e => e.currentTarget.style.background = 'oklch(0.82 0.18 65)'}
+                onMouseEnter={e => e.currentTarget.style.background = 'oklch(0.80 0.15 82)'}
                 onMouseLeave={e => e.currentTarget.style.background = 'var(--amber)'}
               >
                 Rechercher
@@ -215,16 +215,16 @@ export default function HomePage({ navigate }) {
       </section>
 
       {/* CTA */}
-      <section style={{ padding: '60px 28px', background: 'linear-gradient(135deg, var(--amber) 0%, oklch(0.72 0.2 55) 100%)' }}>
+      <section style={{ padding: '60px 28px', background: 'linear-gradient(135deg, var(--amber) 0%, oklch(0.68 0.18 72) 100%)' }}>
         <div style={{ maxWidth: 780, margin: '0 auto', textAlign: 'center' }}>
           <h2 style={{ fontSize: 32, fontWeight: 800, color: 'var(--navy)', margin: '0 0 14px', letterSpacing: '-0.6px' }}>Prêt à développer vos compétences ?</h2>
-          <p style={{ fontSize: 15.5, color: 'oklch(0.3 0.12 245)', marginBottom: 32, lineHeight: 1.55 }}>
+          <p style={{ fontSize: 15.5, color: 'oklch(0.25 0.10 148)', marginBottom: 32, lineHeight: 1.55 }}>
             Contactez-nous pour un accompagnement personnalisé. Nous construisons ensemble votre parcours de formation.
           </p>
           <div style={{ display: 'flex', gap: 14, justifyContent: 'center' }}>
             <button onClick={() => navigate('catalogue')}
               style={{ background: 'var(--navy)', color: 'white', padding: '13px 28px', borderRadius: 9, fontWeight: 700, fontSize: 14.5, border: 'none', cursor: 'pointer' }}
-              onMouseEnter={e => e.currentTarget.style.background = 'oklch(0.18 0.09 255)'}
+              onMouseEnter={e => e.currentTarget.style.background = 'oklch(0.18 0.10 148)'}
               onMouseLeave={e => e.currentTarget.style.background = 'var(--navy)'}
             >
               Voir le catalogue
