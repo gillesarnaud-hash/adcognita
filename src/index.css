@@ -5,9 +5,9 @@
 }
 
 :root {
-  --navy:      oklch(0.22 0.09 255);
-  --navy-mid:  oklch(0.28 0.09 255);
-  --amber:     oklch(0.76 0.18 65);
+  --navy:      oklch(0.22 0.12 148);
+  --navy-mid:  oklch(0.29 0.12 148);
+  --amber:     oklch(0.74 0.15 82);
   --text:      oklch(0.18 0.04 255);
   --muted:     oklch(0.52 0.03 255);
   --border:    oklch(0.90 0.015 255);
