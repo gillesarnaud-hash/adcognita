@@ -9,7 +9,7 @@ import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 
 const TWEAK_DEFAULTS = {
-  primaryColor: 'oklch(0.30 0.13 148)',
+  primaryColor: 'oklch(0.37 0.13 148)',
   accentColor: 'oklch(0.74 0.15 82)',
   fontFamily: 'Plus Jakarta Sans',
 };

@@ -10,7 +10,7 @@ export default function HomePage({ navigate }) {
     <div>
       {/* Hero */}
       <section style={{
-        background: 'linear-gradient(135deg, var(--navy) 0%, oklch(0.34 0.11 155) 60%, oklch(0.28 0.09 168) 100%)',
+        background: 'linear-gradient(135deg, var(--navy) 0%, oklch(0.41 0.11 155) 60%, oklch(0.35 0.09 168) 100%)',
         padding: '80px 28px 90px', position: 'relative', overflow: 'hidden'
       }}>
         <div style={{ position: 'absolute', top: -80, right: -60, width: 380, height: 380, borderRadius: '50%', background: 'rgba(255,255,255,0.03)', pointerEvents: 'none' }} />
