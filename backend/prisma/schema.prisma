@@ -1,0 +1,322 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  CLIENT
+}
+
+enum FormationStatus {
+  DRAFT
+  PUBLISHED
+  SUSPENDED
+  ARCHIVED
+}
+
+enum SessionStatus {
+  SCHEDULED
+  ONGOING
+  COMPLETED
+  CANCELLED
+}
+
+enum InscriptionStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+enum DevisStatus {
+  DRAFT
+  SENT
+  ACCEPTED
+  REJECTED
+  EXPIRED
+}
+
+enum FactureStatus {
+  DRAFT
+  SENT
+  PARTIAL
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+enum PaiementStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+model User {
+  id          String    @id @default(uuid())
+  email       String    @unique
+  password    String
+  role        Role      @default(CLIENT)
+  firstName   String
+  lastName    String
+  phone       String?
+  isActive    Boolean   @default(true)
+  lastLoginAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  client           Client?
+  sentMessages     Message[]      @relation("SentMessages")
+  receivedMessages Message[]      @relation("ReceivedMessages")
+  notifications    Notification[]
+  auditLogs        AuditLog[]
+  refreshTokens    RefreshToken[]
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model Client {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  companyId String?
+  company   Company? @relation(fields: [companyId], references: [id])
+  status    String   @default("prospect")
+  notes     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  inscriptions Inscription[]
+  devis        Devis[]
+  factures     Facture[]
+}
+
+model Company {
+  id        String    @id @default(uuid())
+  name      String
+  siret     String?
+  vatNumber String?
+  address   String?
+  city      String?
+  zipCode   String?
+  country   String    @default("France")
+  email     String?
+  phone     String?
+  website   String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  clients  Client[]
+  contacts Contact[]
+}
+
+model Contact {
+  id        String   @id @default(uuid())
+  companyId String
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  firstName String
+  lastName  String
+  email     String?
+  phone     String?
+  jobTitle  String?
+  isPrimary Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Formation {
+  id            String          @id @default(uuid())
+  title         String
+  slug          String?         @unique
+  description   String?
+  objectives    String?
+  duration      String?
+  price         Decimal?        @db.Decimal(10, 2)
+  modalities    String?
+  prerequisites String?
+  status        FormationStatus @default(DRAFT)
+  category      String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  sessions     Session[]
+  devisLines   DevisLine[]
+  factureLines FactureLine[]
+  documents    Document[]      @relation("FormationDocuments")
+}
+
+model Session {
+  id              String        @id @default(uuid())
+  formationId     String
+  formation       Formation     @relation(fields: [formationId], references: [id], onDelete: Cascade)
+  startDate       DateTime
+  endDate         DateTime
+  location        String?
+  maxParticipants Int?
+  status          SessionStatus @default(SCHEDULED)
+  notes           String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  inscriptions Inscription[]
+}
+
+model Inscription {
+  id        String            @id @default(uuid())
+  sessionId String
+  session   Session           @relation(fields: [sessionId], references: [id])
+  clientId  String
+  client    Client            @relation(fields: [clientId], references: [id])
+  status    InscriptionStatus @default(PENDING)
+  notes     String?
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  @@unique([sessionId, clientId])
+}
+
+model Devis {
+  id         String      @id @default(uuid())
+  number     String      @unique
+  clientId   String
+  client     Client      @relation(fields: [clientId], references: [id])
+  totalHT    Decimal     @db.Decimal(10, 2)
+  tvaRate    Decimal     @db.Decimal(5, 2) @default(20)
+  totalTVA   Decimal     @db.Decimal(10, 2)
+  totalTTC   Decimal     @db.Decimal(10, 2)
+  validUntil DateTime?
+  status     DevisStatus @default(DRAFT)
+  notes      String?
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  lines     DevisLine[]
+  factures  Facture[]
+  documents Document[]  @relation("DevisDocuments")
+}
+
+model DevisLine {
+  id          String     @id @default(uuid())
+  devisId     String
+  devis       Devis      @relation(fields: [devisId], references: [id], onDelete: Cascade)
+  formationId String?
+  formation   Formation? @relation(fields: [formationId], references: [id])
+  description String
+  quantity    Int        @default(1)
+  unitPrice   Decimal    @db.Decimal(10, 2)
+  total       Decimal    @db.Decimal(10, 2)
+  sortOrder   Int        @default(0)
+}
+
+model Facture {
+  id        String        @id @default(uuid())
+  number    String        @unique
+  devisId   String?
+  devis     Devis?        @relation(fields: [devisId], references: [id])
+  clientId  String
+  client    Client        @relation(fields: [clientId], references: [id])
+  totalHT   Decimal       @db.Decimal(10, 2)
+  tvaRate   Decimal       @db.Decimal(5, 2) @default(20)
+  totalTVA  Decimal       @db.Decimal(10, 2)
+  totalTTC  Decimal       @db.Decimal(10, 2)
+  dueDate   DateTime?
+  status    FactureStatus @default(DRAFT)
+  notes     String?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  lines     FactureLine[]
+  paiements Paiement[]
+  documents Document[]    @relation("FactureDocuments")
+}
+
+model FactureLine {
+  id          String     @id @default(uuid())
+  factureId   String
+  facture     Facture    @relation(fields: [factureId], references: [id], onDelete: Cascade)
+  formationId String?
+  formation   Formation? @relation(fields: [formationId], references: [id])
+  description String
+  quantity    Int        @default(1)
+  unitPrice   Decimal    @db.Decimal(10, 2)
+  total       Decimal    @db.Decimal(10, 2)
+  sortOrder   Int        @default(0)
+}
+
+model Paiement {
+  id        String         @id @default(uuid())
+  factureId String
+  facture   Facture        @relation(fields: [factureId], references: [id])
+  amount    Decimal        @db.Decimal(10, 2)
+  date      DateTime       @default(now())
+  method    String?
+  reference String?
+  status    PaiementStatus @default(COMPLETED)
+  notes     String?
+  createdAt DateTime       @default(now())
+}
+
+model Message {
+  id         String    @id @default(uuid())
+  fromUserId String
+  from       User      @relation("SentMessages", fields: [fromUserId], references: [id])
+  toUserId   String
+  to         User      @relation("ReceivedMessages", fields: [toUserId], references: [id])
+  subject    String
+  content    String
+  readAt     DateTime?
+  createdAt  DateTime  @default(now())
+}
+
+model Notification {
+  id        String    @id @default(uuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String
+  title     String
+  content   String
+  link      String?
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+}
+
+model Document {
+  id           String    @id @default(uuid())
+  entityType   String
+  entityId     String
+  filename     String
+  originalName String
+  mimeType     String
+  size         Int
+  path         String
+  uploadedById String?
+  createdAt    DateTime  @default(now())
+
+  formations Formation[] @relation("FormationDocuments")
+  devis      Devis[]     @relation("DevisDocuments")
+  factures   Facture[]   @relation("FactureDocuments")
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  action    String
+  entity    String
+  entityId  String?
+  details   Json?
+  ipAddress String?
+  createdAt DateTime @default(now())
+}

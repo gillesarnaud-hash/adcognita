@@ -1,2 +1,5 @@
 node_modules/
 dist/
+backend/.env
+backend/logs/
+backend/uploads/
